@@ -45,8 +45,16 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Serber." });
 });
 
-require("./routes/auth.routes")(app);
-require("./routes/user.routes")(app);
+//require all routes inside /routes
+require("fs")
+  .readdirSync(__dirname + "/routes/")
+  .forEach(function (file) {
+    if (file.match(/\.js$/) !== null && file !== "index.js") {
+      var name = file.replace(".js", "");
+      require("./routes/" + name)(app);
+      console.log(name);
+    }
+  });
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

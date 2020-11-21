@@ -19,8 +19,15 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.user = require("../models/user.model.js")(sequelize, Sequelize);
-db.role = require("../models/role.model.js")(sequelize, Sequelize);
+// Load `*.js` under current directory as properties
+require("fs")
+  .readdirSync(__dirname + "/")
+  .forEach(function (file) {
+    if (file.match(/\.js$/) !== null && file !== "index.js") {
+      var name = file.replace(".model.js", "");
+      db[name] = require("../models/" + file)(sequelize, Sequelize);
+    }
+  });
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
