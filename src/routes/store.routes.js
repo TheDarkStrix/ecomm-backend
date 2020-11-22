@@ -22,6 +22,13 @@ module.exports = function (app) {
     controller.allStores
   );
 
+  // Client Route for testing
+  app.get(
+    "/api/auth/store",
+    [authJwt.verifyToken, authJwt.isValidDomainAndStore],
+    controller.getStore
+  );
+
   app.delete(
     "/api/auth/deleteStore",
     [authJwt.verifyToken, authJwt.isAdmin],

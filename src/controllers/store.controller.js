@@ -19,6 +19,7 @@ exports.createStore = async (req, res) => {
     storeCategory: req.body.storecategory,
     pan: req.body.pan,
     gst: req.body.gst,
+    domainKey: req.body.domainkey,
   })
     .then((user) => {
       res.send(user);
@@ -38,6 +39,21 @@ exports.createStore = async (req, res) => {
 exports.allStores = (req, res) => {
   console.log("AlL STORES");
   Stores.findAll()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.getStore = (req, res) => {
+  console.log("Single Store");
+  Stores.findOne({
+    where: {
+      storeId: req.body.storeid,
+    },
+  })
     .then((data) => {
       res.send(data);
     })

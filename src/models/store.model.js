@@ -15,6 +15,9 @@ module.exports = (sequelize, Sequelize) => {
     gst: {
       type: Sequelize.STRING,
     },
+    domainKey: {
+      type: Sequelize.STRING,
+    },
   });
 
   return Store;

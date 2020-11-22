@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
+const { Op } = require("sequelize");
 const db = require("../models");
 const User = db.user;
+const Store = db.store;
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
@@ -80,10 +82,34 @@ isModeratorOrAdmin = (req, res, next) => {
   });
 };
 
+isValidDomainAndStore = (req, res, next) => {
+  Store.findOne({
+    where: {
+      [Op.and]: [{ storeId: req.body.storeid, domainKey: req.hostname }],
+    },
+  })
+    .then((store) => {
+      console.log(store);
+      if (store) {
+        next();
+        return;
+      } else {
+        res.status(403).send({
+          message: "Server Not Authorized",
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+  console.log(req.hostname, req);
+};
+
 const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isModerator: isModerator,
   isModeratorOrAdmin: isModeratorOrAdmin,
+  isValidDomainAndStore: isValidDomainAndStore,
 };
 module.exports = authJwt;
