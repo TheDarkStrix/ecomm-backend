@@ -14,6 +14,7 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
+    storeId: req.body.storeid,
   })
     .then((user) => {
       if (req.body.roles) {
@@ -43,12 +44,14 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
   User.findOne({
     where: {
-      username: req.body.username,
+      [Op.and]: [{ username: req.body.username, storeId: req.body.storeid }],
     },
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res
+          .status(404)
+          .send({ message: "User Not found or not registered" });
       }
 
       var passwordIsValid = bcrypt.compareSync(
@@ -61,6 +64,12 @@ exports.signin = (req, res) => {
           accessToken: null,
           message: "Invalid Password!",
         });
+      }
+
+      if (user.storeId != req.body.storeid) {
+        return res
+          .status(401)
+          .send({ message: "User not Registered for this store" });
       }
 
       var token = jwt.sign({ id: user.id }, config.secret, {

@@ -77,3 +77,19 @@ exports.deleteStore = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
+
+exports.getStoreFromDomain = (req, res) => {
+  console.log("HOST", req.hostname);
+  Stores.findOne({
+    where: {
+      domainKey: req.hostname,
+    },
+  })
+    .then((data) => {
+      console.log(data);
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};

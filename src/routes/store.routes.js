@@ -22,12 +22,26 @@ module.exports = function (app) {
     controller.allStores
   );
 
-  // Client Route for testing
+  // Client Get Store -> domain and Storeid is validated
   app.get(
     "/api/auth/store",
     [authJwt.verifyToken, authJwt.isValidDomainAndStore],
     controller.getStore
   );
+
+  // app.put(
+  //   "/api/admin/auth/store",
+  //   [authJwt.verifyToken, authJwt.isModeratorOrAdmin],
+  //   controller.updateStoreAdmin
+  // );
+
+  // Client Update Store -> domain and Storeid is validated
+  // app.put("/api/auth/store", [
+  //   authJwt.verifyToken,
+  //   authJwt.isValidDomainAndStore,
+  // ]);
+
+  app.get("/api/getStoreInitially", controller.getStoreFromDomain);
 
   app.delete(
     "/api/auth/deleteStore",

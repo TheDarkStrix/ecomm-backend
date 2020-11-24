@@ -2,6 +2,7 @@ module.exports = (sequelize, Sequelize) => {
   const Store = sequelize.define("store", {
     storeId: {
       type: Sequelize.STRING,
+      primaryKey: true,
     },
     storeName: {
       type: Sequelize.STRING,
