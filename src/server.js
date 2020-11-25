@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 
 var corsOptions = {
-  origin: "http://a.com",
+  origin: ["http://a.com", "http://localhost:4200"],
 };
 
 const db = require("./models");
@@ -38,6 +38,11 @@ function initial() {
   Role.create({
     id: 3,
     name: "admin",
+  });
+
+  Role.create({
+    id: 4,
+    name: "super-admin",
   });
 }
 // simple route

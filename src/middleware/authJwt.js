@@ -17,7 +17,7 @@ verifyToken = (req, res, next) => {
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({
-        message: "Unauthorized!",
+        message: "Unauthorized! Please try logging in again",
       });
     }
     req.userId = decoded.id;
@@ -29,7 +29,7 @@ isAdmin = (req, res, next) => {
   User.findByPk(req.userId).then((user) => {
     user.getRoles().then((roles) => {
       for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "admin") {
+        if (roles[i].name === "admin" || roles[i].name === "super-admin") {
           next();
           return;
         }
@@ -47,7 +47,7 @@ isModerator = (req, res, next) => {
   User.findByPk(req.userId).then((user) => {
     user.getRoles().then((roles) => {
       for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
+        if (roles[i].name === "moderator" || roles[i].name === "super-admin") {
           next();
           return;
         }
@@ -60,16 +60,33 @@ isModerator = (req, res, next) => {
   });
 };
 
+isSuperAdmin = (req, res, next) => {
+  User.findByPk(req.userId).then((user) => {
+    user.getRoles().then((roles) => {
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].name === "super-admin") {
+          next();
+          return;
+        }
+      }
+
+      res.status(403).send({
+        message: "Require Super Admin Role!",
+      });
+      return;
+    });
+  });
+};
+
 isModeratorOrAdmin = (req, res, next) => {
   User.findByPk(req.userId).then((user) => {
     user.getRoles().then((roles) => {
       for (let i = 0; i < roles.length; i++) {
-        if (roles[i].name === "moderator") {
-          next();
-          return;
-        }
-
-        if (roles[i].name === "admin") {
+        if (
+          roles[i].name === "admin" ||
+          roles[i].name === "moderator" ||
+          roles[i].name === "super-admin"
+        ) {
           next();
           return;
         }
@@ -111,5 +128,6 @@ const authJwt = {
   isModerator: isModerator,
   isModeratorOrAdmin: isModeratorOrAdmin,
   isValidDomainAndStore: isValidDomainAndStore,
+  isSuperAdmin: isSuperAdmin,
 };
 module.exports = authJwt;

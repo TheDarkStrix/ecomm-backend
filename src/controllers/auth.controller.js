@@ -25,13 +25,23 @@ exports.signup = (req, res) => {
             },
           },
         }).then((roles) => {
+          //TODO:
+          // add extra security if super-admin creation
+          //a placeholder check if creating user is a super-admin
+          let isSuperAdmin = roles.some(
+            (role) => role["name"] === "super-admin"
+          );
+          console.log(isSuperAdmin);
+
           user.setRoles(roles).then(() => {
+            JSON.stringify(console.log("RULES -->", roles));
             res.send({ message: "User was registered successfully!" });
           });
         });
       } else {
         // user role = 1
         user.setRoles([1]).then(() => {
+          console.log(roles);
           res.send({ message: "User was registered successfully!" });
         });
       }
