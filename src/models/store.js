@@ -9,10 +9,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // Store.belongsTo(models.Store, {
+      //   foreignKey: "storeId",
+      // });
     }
   }
   Store.init(
     {
+      storeId: {
+        primaryKey: true,
+        type: DataTypes.STRING,
+      },
       storeName: DataTypes.STRING,
       storeCategory: DataTypes.STRING,
       pan: DataTypes.STRING,
