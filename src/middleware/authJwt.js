@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const { Op } = require("sequelize");
 const db = require("../models");
-const User = db.user;
-const Store = db.store;
+const User = db.User;
+const Store = db.Store;
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];

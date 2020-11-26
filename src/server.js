@@ -9,7 +9,7 @@ var corsOptions = {
 };
 
 const db = require("./models");
-const Role = db.role;
+const Role = db.Role;
 
 app.use(cors(corsOptions));
 

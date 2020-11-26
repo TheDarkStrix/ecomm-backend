@@ -1,15 +1,7 @@
 const db = require("../models");
-const config = require("../config/auth.config");
-const User = db.user;
-const Role = db.role;
-const Stores = db.store;
+const User = db.User;
+const Stores = db.Store;
 const { nanoid } = require("nanoid");
-
-const Op = db.Sequelize.Op;
-
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
-const { Store } = require("express-session");
 
 exports.createStore = async (req, res) => {
   console.log("createStore");
