@@ -99,6 +99,23 @@ isModeratorOrAdmin = (req, res, next) => {
   });
 };
 
+isSuperAdminOrModerator = (req, res, next) => {
+  User.findByPk(req.userId).then((user) => {
+    user.getRoles().then((roles) => {
+      for (let i = 0; i < roles.length; i++) {
+        if (roles[i].name === "moderator" || roles[i].name === "super-admin") {
+          next();
+          return;
+        }
+      }
+
+      res.status(403).send({
+        message: "Require Moderator or Super Admin Role!",
+      });
+    });
+  });
+};
+
 isValidDomainAndStore = (req, res, next) => {
   Store.findOne({
     where: {
@@ -128,6 +145,7 @@ const authJwt = {
   isModerator: isModerator,
   isModeratorOrAdmin: isModeratorOrAdmin,
   isValidDomainAndStore: isValidDomainAndStore,
+  isSuperAdminOrModerator: isSuperAdminOrModerator,
   isSuperAdmin: isSuperAdmin,
 };
 module.exports = authJwt;

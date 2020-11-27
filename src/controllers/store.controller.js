@@ -41,9 +41,10 @@ exports.allStores = (req, res) => {
 
 exports.getStore = (req, res) => {
   console.log("Single Store");
+  const storeId = req.params.storeId;
   Stores.findOne({
     where: {
-      storeId: req.body.storeid,
+      storeId: storeId,
     },
   })
     .then((data) => {
@@ -55,10 +56,11 @@ exports.getStore = (req, res) => {
 };
 
 exports.deleteStore = (req, res) => {
+  const storeId = req.params.storeId;
   console.log("Delete Store");
   Stores.findOne({
     where: {
-      storeId: req.body.storeid,
+      storeId: storeId,
     },
   })
     .then((data) => {

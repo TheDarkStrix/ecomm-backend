@@ -10,42 +10,34 @@ module.exports = function (app) {
     next();
   });
 
+  //create Store [Moderator and Super Admin Route Only]
   app.post(
-    "/api/auth/createStore",
-    [authJwt.verifyToken, authJwt.isModeratorOrAdmin],
+    "/api/auth/store",
+    [authJwt.verifyToken, authJwt.isSuperAdminOrModerator],
     controller.createStore
   );
 
+  // get all Stores [Super Admin Route Only]
   app.get(
-    "/api/auth/allStores",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    "/api/auth/stores",
+    [authJwt.verifyToken, authJwt.isSuperAdmin],
     controller.allStores
   );
 
-  // Client Get Store -> domain and Storeid is validated
+  // get store checks for valid domain and storeID [ Public / User Route]
   app.get(
-    "/api/auth/store",
+    "/api/auth/store/:storeId",
     [authJwt.verifyToken, authJwt.isValidDomainAndStore],
     controller.getStore
   );
 
-  // app.put(
-  //   "/api/admin/auth/store",
-  //   [authJwt.verifyToken, authJwt.isModeratorOrAdmin],
-  //   controller.updateStoreAdmin
-  // );
-
-  // Client Update Store -> domain and Storeid is validated
-  // app.put("/api/auth/store", [
-  //   authJwt.verifyToken,
-  //   authJwt.isValidDomainAndStore,
-  // ]);
-
+  // get store from domain [ Public / User Route]
   app.get("/api/getStoreInitially", controller.getStoreFromDomain);
 
+  // delete store [Super Admin Route Only]
   app.delete(
-    "/api/auth/deleteStore",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    "/api/auth/store/:storeId",
+    [authJwt.verifyToken, authJwt.isSuperAdmin],
     controller.deleteStore
   );
 };

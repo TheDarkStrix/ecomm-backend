@@ -1,6 +1,4 @@
 const db = require("../models");
-const User = db.User;
-const Stores = db.Store;
 const Products = db.Products;
 const { nanoid } = require("nanoid");
 
@@ -34,11 +32,12 @@ exports.createProducts = (req, res) => {
 };
 
 //get all products of a particular store
-exports.allProducts = (req, res) => {
-  console.log("AlL Products");
+exports.allProductsOfStore = (req, res) => {
+  const storeId = req.params.storeId;
+  console.log("AlL Products of a store");
   Products.findAll({
     where: {
-      storeId: req.body.storeId,
+      storeId: storeId,
     },
   })
     .then((data) => {
@@ -49,37 +48,12 @@ exports.allProducts = (req, res) => {
     });
 };
 
-// exports.allStores = (req, res) => {
-//   console.log("AlL STORES");
-//   Stores.findAll()
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({ message: err.message });
-//     });
-// };
-
-// exports.getStore = (req, res) => {
-//   console.log("Single Store");
-//   Stores.findOne({
-//     where: {
-//       storeId: req.body.storeid,
-//     },
-//   })
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({ message: err.message });
-//     });
-// };
-
 exports.deleteProducts = (req, res) => {
+  const productId = req.params.productId;
   console.log("Delete Store");
   Products.findOne({
     where: {
-      id: req.body.productId,
+      id: productId,
     },
   })
     .then((data) => {
@@ -90,19 +64,3 @@ exports.deleteProducts = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
-
-// exports.getStoreFromDomain = (req, res) => {
-//   console.log("HOST", req.hostname);
-//   Stores.findOne({
-//     where: {
-//       domainKey: req.hostname,
-//     },
-//   })
-//     .then((data) => {
-//       console.log(data);
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({ message: err.message });
-//     });
-// };

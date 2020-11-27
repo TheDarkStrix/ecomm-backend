@@ -10,20 +10,23 @@ module.exports = function (app) {
     next();
   });
 
+  // create a product [Moderator or Admin or Super Admin Route]
   app.post(
-    "/api/auth/createProduct",
+    "/api/auth/product",
     [authJwt.verifyToken, authJwt.isModeratorOrAdmin],
     controller.createProducts
   );
 
+  // get all products of a store [Public / User Route]
   app.get(
-    "/api/auth/allProducts",
+    "/api/auth/products/:storeId",
     [authJwt.verifyToken],
-    controller.allProducts
+    controller.allProductsOfStore
   );
 
+  // delete product [Moderator or Admin or Super Admin Route]
   app.delete(
-    "/api/auth/product",
+    "/api/auth/product/:productId",
     [authJwt.verifyToken, authJwt.isModeratorOrAdmin],
     controller.deleteProducts
   );
