@@ -14,7 +14,7 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-    storeId: req.body.storeid,
+    storeId: req.body.storeId,
   })
     .then((user) => {
       if (req.body.roles) {
@@ -52,55 +52,114 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  User.findOne({
-    where: {
-      [Op.and]: [{ username: req.body.username, storeId: req.body.storeid }],
-    },
-  })
-    .then((user) => {
-      if (!user) {
-        return res
-          .status(404)
-          .send({ message: "User Not found or not registered" });
-      }
-
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!",
-        });
-      }
-
-      if (user.storeId != req.body.storeid) {
-        return res
-          .status(401)
-          .send({ message: "User not Registered for this store" });
-      }
-
-      var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400, // 24 hours
-      });
-
-      var authorities = [];
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
-        res.status(200).send({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          roles: authorities,
-          accessToken: token,
-        });
-      });
+  if (req.body.storeId === "admin") {
+    console.log("STORE admin lOGIn");
+    User.findOne({
+      where: {
+        username: req.body.username,
+      },
     })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
+      .then((user) => {
+        console.log(user);
+        if (!user) {
+          return res
+            .status(404)
+            .send({ message: "User Not found or not registered" });
+        }
+
+        var passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
+
+        if (!passwordIsValid) {
+          return res.status(401).send({
+            accessToken: null,
+            message: "Invalid Password!",
+          });
+        }
+
+        // if (user.storeId != req.body.storeId) {
+        //   return res
+        //     .status(401)
+        //     .send({ message: "User not Registered for this store" });
+        // }
+
+        var token = jwt.sign({ id: user.id }, config.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+
+        var authorities = [];
+        user.getRoles().then((roles) => {
+          for (let i = 0; i < roles.length; i++) {
+            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+          }
+          res.status(200).send({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            roles: authorities,
+            accessToken: token,
+            storeId: user.storeId,
+          });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+  } else {
+    User.findOne({
+      where: {
+        username: req.body.username,
+        storeId: req.body.storeId,
+      },
+    })
+      .then((user) => {
+        if (!user) {
+          return res
+            .status(404)
+            .send({ message: "User Not found or not registered" });
+        }
+
+        var passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
+
+        if (!passwordIsValid) {
+          return res.status(401).send({
+            accessToken: null,
+            message: "Invalid Password!",
+          });
+        }
+
+        if (user.storeId != req.body.storeId) {
+          return res
+            .status(401)
+            .send({ message: "User not Registered for this store" });
+        }
+
+        var token = jwt.sign({ id: user.id }, config.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+
+        var authorities = [];
+        user.getRoles().then((roles) => {
+          for (let i = 0; i < roles.length; i++) {
+            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+          }
+          res.status(200).send({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            roles: authorities,
+            accessToken: token,
+            storeId: user.storeId,
+          });
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+  }
 };
