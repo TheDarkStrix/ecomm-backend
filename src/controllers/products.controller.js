@@ -36,11 +36,14 @@ exports.allProductsOfStore = (req, res) => {
   const storeId = req.params.storeId;
   console.log("AlL Products of a store");
   Products.findAll({
+    attributes: ["id", "title", "sku", "price", "quantity", "active"],
     where: {
       storeId: storeId,
     },
   })
     .then((data) => {
+      console.log(data);
+      console.log(data.title);
       res.send(data);
     })
     .catch((err) => {
